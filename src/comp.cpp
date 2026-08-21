@@ -1,7 +1,9 @@
 /// @file
 
+#include "auxf.h"
 #include "comp.h"
 
+#include <assert.h>
 #include <math.h>
 
 /**
@@ -17,5 +19,11 @@
 bool
 isequal(double a, double b)
 {
+	assert(!ISNAN(a));
+	assert(!ISINF(a));
+
+	assert(!ISNAN(b));
+	assert(!ISINF(b));
+
 	return fabs(a - b) < EPS;
 }
