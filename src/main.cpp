@@ -18,6 +18,7 @@ main(void)
 	printf("Quadratic equation solver\n"
 	       "Copyright (c) radi0d 2026\n\n"
 	       );
+
 	double a = 0, b = 0, c = 0;
 
 	HANDLE(prompt_user("a", &a));
