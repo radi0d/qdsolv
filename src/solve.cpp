@@ -33,11 +33,7 @@ quad_solve(double a, double b, double c) {
 	if (isequal(a, 0)) {
 		struct roots result = lin_solve(b, c);
 		assert(result.num != TWO_ROOTS);
-		return (struct roots) {
-			.x1 = result.x1,
-			.x2 = 0,
-			.num = result.num,
-		};
+		return result;
 	}
 
 	double discr = get_discr(a, b, c);
