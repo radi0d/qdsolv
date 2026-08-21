@@ -18,7 +18,7 @@ main(void)
 	handle_prompt_error(prompt_user("b", &b));
 	handle_prompt_error(prompt_user("c", &c));
 
-	struct quad_roots result = quad_solve(a, b, c);
+	struct roots result = quad_solve(a, b, c);
 
 	printf("\n");
 	switch (result.num) {

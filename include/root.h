@@ -13,11 +13,11 @@ enum root_number {
 };
 
 /**
- * @brief Roots of a quadratic equation
+ * @brief Roots of an equation
  *
  * The result of quad_solve()
  */
-struct quad_roots {
+struct roots {
 	double x1; // the 1st root
 	double x2; // the 2nd root
 	enum root_number num; // the number of the roots

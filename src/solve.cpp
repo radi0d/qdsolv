@@ -7,13 +7,7 @@
 #include <assert.h>
 #include <math.h>
 
-// the roots of a linear equation
-struct lin_root {
-	double x; // the root
-	enum root_number num; // the number of the roots
-};
-
-static struct lin_root lin_solve(double a, double b);
+static struct roots lin_solve(double a, double b);
 static double get_discr(double a, double b, double c);
 
 /**
@@ -23,7 +17,7 @@ static double get_discr(double a, double b, double c);
  * @param[in] b Coefficient b
  * @param[in] c Coefficient c
  */
-struct quad_roots
+struct roots
 quad_solve(double a, double b, double c) {
 	assert(!isnan(a));
 	assert(!isinf(a));
@@ -36,10 +30,10 @@ quad_solve(double a, double b, double c) {
 
 	// linear equation
 	if (isequal(a, 0)) {
-		struct lin_root result = lin_solve(b, c);
+		struct roots result = lin_solve(b, c);
 		assert(result.num != TWO_ROOTS);
-		return (struct quad_roots) {
-			.x1 = result.x,
+		return (struct roots) {
+			.x1 = result.x1,
 			.x2 = 0,
 			.num = result.num,
 		};
@@ -47,21 +41,21 @@ quad_solve(double a, double b, double c) {
 
 	double discr = get_discr(a, b, c);
 	if (discr < 0) {
-		return (struct quad_roots) {
+		return (struct roots) {
 			.x1 = 0,
 			.x2 = 0,
 			.num = NO_ROOTS,
 		};
 	}
 	if (isequal(discr, 0)) {
-		return (struct quad_roots) {
+		return (struct roots) {
 			.x1 = -b / (2 * a),
 			.x2 = 0,
 			.num = ONE_ROOT,
 		};
 	}
 	// discr > 0
-	return (struct quad_roots) {
+	return (struct roots) {
 		.x1 = (-b - sqrt(discr)) / (2 * a),
 		.x2 = (-b + sqrt(discr)) / (2 * a),
 		.num = TWO_ROOTS,
@@ -69,7 +63,7 @@ quad_solve(double a, double b, double c) {
 }
 
 // solves a linear equation (ax + b = 0)
-static struct lin_root
+static struct roots
 lin_solve(double a, double b)
 {
 	assert(!isnan(a));
@@ -81,21 +75,24 @@ lin_solve(double a, double b)
 	if (isequal(a, 0)) {
 		// equation 0 = 0
 		if (isequal(b, 0)) {
-			return (struct lin_root) {
-				.x = 0,
+			return (struct roots) {
+				.x1 = 0,
+				.x2 = 0,
 				.num = INF_ROOTS,
 			};
 		}
 		// equation b = 0
-		return (struct lin_root) {
-			.x = 0,
+		return (struct roots) {
+			.x1 = 0,
+			.x2 = 0,
 			.num = NO_ROOTS,
 		};
 	}
 
 	// ax + b = 0
-	return (struct lin_root) {
-		.x = -b / a,
+	return (struct roots) {
+		.x1 = -b / a,
+		.x2 = -b / a,
 		.num = ONE_ROOT,
 	};
 }
