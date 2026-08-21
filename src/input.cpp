@@ -37,7 +37,7 @@ get_double(double *dst)
 	char mark = ' ';
 	ssize_t num = sscanf(line, "%lf %c", &t, &mark);
 
-	if (num != 1 || isnan(t) || isinf(t) || !isspace(mark)) {
+	if (1 != num || isnan(t) || isinf(t) || !isspace(mark)) {
 		free(line);
 		return -1;
 	}
