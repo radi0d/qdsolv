@@ -6,8 +6,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-// TODO: better documentation
-
 int
 main(void)
 {
