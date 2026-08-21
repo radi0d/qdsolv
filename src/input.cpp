@@ -1,5 +1,6 @@
 /// @file
 
+#include "auxf.h"
 #include "input.h"
 
 #include <assert.h>
@@ -37,7 +38,7 @@ get_double(double *dst)
 	char mark = ' ';
 	ssize_t num = sscanf(line, "%lf %c", &t, &mark);
 
-	if (1 != num || isnan(t) || isinf(t) || !isspace(mark)) {
+	if (1 != num || ISNAN(t) || ISINF(t) || !isspace(mark)) {
 		free(line);
 		return -1;
 	}

@@ -1,5 +1,6 @@
 /// @file
 
+#include "auxf.h"
 #include "comp.h"
 #include "root.h"
 #include "solve.h"
@@ -19,14 +20,14 @@ static double get_discr(double a, double b, double c);
  */
 struct roots
 quad_solve(double a, double b, double c) {
-	assert(!isnan(a));
-	assert(!isinf(a));
+	assert(!ISNAN(a));
+	assert(!ISINF(a));
 
-	assert(!isnan(b));
-	assert(!isinf(b));
+	assert(!ISNAN(b));
+	assert(!ISINF(b));
 
-	assert(!isnan(c));
-	assert(!isinf(c));
+	assert(!ISNAN(c));
+	assert(!ISINF(c));
 
 	// linear equation
 	if (isequal(a, 0)) {
@@ -66,11 +67,11 @@ quad_solve(double a, double b, double c) {
 static struct roots
 lin_solve(double a, double b)
 {
-	assert(!isnan(a));
-	assert(!isinf(a));
+	assert(!ISNAN(a));
+	assert(!ISINF(a));
 
-	assert(!isnan(b));
-	assert(!isinf(b));
+	assert(!ISNAN(b));
+	assert(!ISINF(b));
 
 	if (isequal(a, 0)) {
 		// equation 0 = 0
@@ -101,14 +102,14 @@ lin_solve(double a, double b)
 static double
 get_discr(double a, double b, double c)
 {
-	assert(!isnan(a));
-	assert(!isinf(a));
+	assert(!ISNAN(a));
+	assert(!ISINF(a));
 
-	assert(!isnan(b));
-	assert(!isinf(b));
+	assert(!ISNAN(b));
+	assert(!ISINF(b));
 
-	assert(!isnan(c));
-	assert(!isinf(c));
+	assert(!ISNAN(c));
+	assert(!ISINF(c));
 
 	return b * b - 4 * a * c;
 }
