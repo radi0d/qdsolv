@@ -8,7 +8,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 /**
  * @brief Gets a double from the stdin line
@@ -24,27 +23,21 @@ get_double(double *dst)
 {
 	assert(dst != NULL);
 
-	char *line = NULL;
-	size_t cap = 0;
-	ssize_t read = getline(&line, &cap, stdin);
-	if (read < 0) {
-		return -1;
-	}
-	if (NULL == line) {
+	double res = 0;
+	int num = scanf("%lf", &res);
+	if (num != 1 || ISNAN(res) || ISINF(res)) {
 		return -1;
 	}
 
-	double t = 0;
-	char mark = ' ';
-	ssize_t num = sscanf(line, "%lf %c", &t, &mark);
-
-	if (1 != num || ISNAN(t) || ISINF(t) || !isspace(mark)) {
-		free(line);
-		return -1;
+	// sanitise the remaining chars
+	int c = 0;
+	while ((c = getchar()) != '\n' && c != EOF) {
+		if (!isspace(c)) {
+			return -1;
+		}
 	}
 
-	*dst = t;
-	free(line);
+	*dst = res;
 	return 1;
 }
 
