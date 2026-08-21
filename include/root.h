@@ -1,5 +1,3 @@
-/// @file
-
 #pragma once
 
 /**
@@ -22,3 +20,5 @@ struct roots {
 	double x2; // the 2nd root
 	enum root_number num; // the number of the roots
 };
+
+void print_roots(struct roots r);
