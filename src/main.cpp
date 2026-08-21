@@ -4,6 +4,14 @@
 
 #include <stdio.h>
 
+#define HANDLE(x)							\
+	do {								\
+		if ((x) < 0) {						\
+			fprintf(stderr, "[ERR] Invalid coefficient format\n"); \
+			return 1;					\
+		}							\
+	} while(0)							\
+
 int
 main(void)
 {
@@ -12,9 +20,9 @@ main(void)
 	       );
 	double a = 0, b = 0, c = 0;
 
-	handle_prompt_error(prompt_user("a", &a));
-	handle_prompt_error(prompt_user("b", &b));
-	handle_prompt_error(prompt_user("c", &c));
+	HANDLE(prompt_user("a", &a));
+	HANDLE(prompt_user("b", &b));
+	HANDLE(prompt_user("c", &c));
 
 	struct roots result = quad_solve(a, b, c);
 

@@ -64,19 +64,3 @@ prompt_user(const char *arg, double *dst)
 	printf("Enter coefficient *%s*: ", arg);
 	return get_double(dst);
 }
-
-/**
- * @brief Handles the error code of prompt_user() and get_double()
- *
- * @param[in] res Error code
- *
- * Handles the error code of prompt_user() and get_double(). If the error code is -1 (see get_double()) print the error message  and leave.
- */
-void
-handle_prompt_error(int res)
-{
-	if (res < 0) {
-		fprintf(stderr, "[ERR] Invalid coefficient format\n");
-		exit(1);
-	}
-}
