@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef EPS
-#define EPS 0.000000001
+#define EPS 1e-9
 #endif
 
 #include <stddef.h>

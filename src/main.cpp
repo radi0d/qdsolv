@@ -40,7 +40,7 @@ main(void)
 		printf("Any number\n");
 		break;
 	default:
-		assert(((void) "Unreachable", 0));
+		assert("Unreachable" && 0);
 	}
 
 	return 0;
