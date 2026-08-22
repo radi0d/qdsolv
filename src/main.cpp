@@ -4,13 +4,13 @@
 
 #include <stdio.h>
 
-#define HANDLE(x)							\
-	do {								\
-		if ((x) < 0) {						\
+#define HANDLE(x)                                                              \
+	do {                                                                   \
+		if ((x) < 0) {                                                 \
 			fprintf(stderr, "[ERR] Invalid coefficient format\n"); \
-			return 1;					\
-		}							\
-	} while(0)							\
+			return 1;                                              \
+		}                                                              \
+	} while(0)
 
 int
 main(void)
