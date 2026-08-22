@@ -1,39 +1,49 @@
 #include "auxf.h"
 #include "comp.h"
-#include "root.h"
+#include "types.h"
 #include "solve.h"
 
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
 
-#define TEST_INIT size_t test_current = 1
+struct test_case {
+	struct coeffs arg;
+	struct roots ref;
+};
+
+#define TEST(a_, b_, c_, num_ref, x1_ref, x2_ref)       \
+	(struct test_case) {                            \
+		.arg = (struct coeffs) {                \
+			.a = a_,                        \
+			.b = b_,                        \
+			.c = c_,                        \
+		},                                      \
+		.ref = (struct roots) {                 \
+			.x1 = x1_ref,                   \
+			.x2 = x2_ref,                   \
+			.num = num_ref,                 \
+		},                                      \
+	}
+
+void run_test(size_t i, struct test_case c);
 
 static bool roots_isequal(roots a, roots b);
-static int run_test(size_t i, double a, double b, double c, double x1_ref,
-                    double x2_ref, enum root_number num_ref);
-
-#define TEST(a, b, c, x1_ref, x2_ref, num_ref)                  \
-	do {                                                    \
-		printf("Running test#%zu... ", test_current);   \
-		if (!run_test(test_current, a, b, c,            \
-		              x1_ref, x2_ref, num_ref)) {       \
-			return 1;                               \
-		}                                               \
-		printf("OK\n");                                 \
-		test_current++;                                 \
-	} while(0)
-
 
 int
 main(void)
 {
-	TEST_INIT;
-	TEST(1, 2, 1, -1, NAN, ONE_ROOT);
-	TEST(1, -12, 35, 5, 7, TWO_ROOTS);
-	TEST(0, 0, 0, NAN, NAN, INF_ROOTS);
-	TEST(0, 0, 1, NAN, NAN, NO_ROOTS);
-	TEST(0, 2, 1, -0.5, NAN, ONE_ROOT);
+	struct test_case cases[] = {
+		TEST(1, 2, 1, ONE_ROOT, -1, NAN),
+		TEST(1, -12, 35, TWO_ROOTS, 5, 7),
+		TEST(0, 0, 0, INF_ROOTS, NAN, NAN),
+		TEST(0, 0, 1, NO_ROOTS, NAN, NAN),
+		TEST(0, 2, 1, ONE_ROOT, -0.5, NAN),
+	};
+
+	for (size_t i = 0; i < sizeof(cases) / sizeof(struct test_case); i++) {
+		run_test(i, cases[i]);
+	}
 	return 0;
 }
 
@@ -60,25 +70,21 @@ roots_isequal(roots a, roots b)
 	}
 }
 
-static int
-run_test(size_t i, double a, double b, double c, double x1_ref,
-         double x2_ref, enum root_number num_ref)
+void
+run_test(size_t i, struct test_case c)
 {
-	roots t = {
-		.x1 = x1_ref,
-		.x2 = x2_ref,
-		.num = num_ref,
-	};
-	roots r = quad_solve(a, b, c);
-	if (!roots_isequal(t, r)) {
-		printf("\nTest#%zu failed:\n"
+	printf("Running test#%zu... ", i);
+	struct roots r = quad_solve(c.arg);
+	if (!roots_isequal(r, c.ref)) {
+		printf("ERR\n");
+		printf("Test#%zu failed:\n"
 		       "Expected: %s root(s); x1 = %lg; x2 = %lg\n"
 		       "Got: %s root(s); x1 = %lg; x2 = %lg\n",
 		       i,
-		       root_number_to_str(num_ref), x1_ref, x2_ref,
+		       root_number_to_str(c.ref.num), c.ref.x1, c.ref.x2,
 		       root_number_to_str(r.num), r.x1, r.x2
 		       );
-		return 0;
+		exit(1);
 	}
-	return 1;
+	printf("OK\n");
 }

@@ -1,5 +1,5 @@
 #include "input.h"
-#include "root.h"
+#include "types.h"
 #include "solve.h"
 
 #include <stdio.h>
@@ -25,7 +25,11 @@ main(void)
 	HANDLE(prompt_user("b", &b));
 	HANDLE(prompt_user("c", &c));
 
-	struct roots result = quad_solve(a, b, c);
+	struct roots result = quad_solve((struct coeffs) {
+		.a = a,
+		.b = b,
+		.c = c,
+	});
 
 	printf("\n");
 	print_roots(result);

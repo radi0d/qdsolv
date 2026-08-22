@@ -24,3 +24,14 @@ struct roots {
 };
 
 void print_roots(struct roots r);
+
+/**
+ * @brief Coefficients of an equation
+ *
+ * The argument of quad_solve()
+ */
+struct coeffs {
+	double a; ///< the 1st coefficient
+	double b; ///< the 2nd coefficient
+	double c; ///< the 3rd coefficient
+};

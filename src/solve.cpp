@@ -2,41 +2,44 @@
 
 #include "auxf.h"
 #include "comp.h"
-#include "root.h"
+#include "types.h"
 #include "solve.h"
 
 #include <assert.h>
 #include <math.h>
 
-static struct roots lin_solve(double a, double b);
-static double get_discr(double a, double b, double c);
+static struct roots lin_solve(struct coeffs c);
+static double get_discr(struct coeffs c);
 
 /**
- * @brief Solves a quadratic equation (ax^2 + bx + c = 0)
+ * @brief Solves a quadratic equation
  *
- * @param[in] a Coefficient a
- * @param[in] b Coefficient b
- * @param[in] c Coefficient c
+ * @param[in] c Coefficients
  */
 struct roots
-quad_solve(double a, double b, double c) {
-	assert(!ISNAN(a));
-	assert(!ISINF(a));
+quad_solve(struct coeffs c) {
+	assert(!ISNAN(c.a));
+	assert(!ISINF(c.a));
 
-	assert(!ISNAN(b));
-	assert(!ISINF(b));
+	assert(!ISNAN(c.b));
+	assert(!ISINF(c.b));
 
-	assert(!ISNAN(c));
-	assert(!ISINF(c));
+	assert(!ISNAN(c.c));
+	assert(!ISINF(c.c));
 
 	// linear equation
-	if (isequal(a, 0)) {
-		struct roots result = lin_solve(b, c);
+	if (isequal(c.a, 0)) {
+		struct coeffs l = (struct coeffs) {
+			.a = c.b,
+			.b = c.c,
+			.c = 0,
+		};
+		struct roots result = lin_solve(l);
 		assert(result.num != TWO_ROOTS);
 		return result;
 	}
 
-	double discr = get_discr(a, b, c);
+	double discr = get_discr(c);
 	if (discr < 0) {
 		return (struct roots) {
 			.x1 = 0,
@@ -46,32 +49,32 @@ quad_solve(double a, double b, double c) {
 	}
 	if (isequal(discr, 0)) {
 		return (struct roots) {
-			.x1 = -b / (2 * a),
+			.x1 = -c.b / (2 * c.a),
 			.x2 = 0,
 			.num = ONE_ROOT,
 		};
 	}
 	// discr > 0
 	return (struct roots) {
-		.x1 = (-b - sqrt(discr)) / (2 * a),
-		.x2 = (-b + sqrt(discr)) / (2 * a),
+		.x1 = (-c.b - sqrt(discr)) / (2 * c.a),
+		.x2 = (-c.b + sqrt(discr)) / (2 * c.a),
 		.num = TWO_ROOTS,
 	};
 }
 
 // solves a linear equation (ax + b = 0)
 static struct roots
-lin_solve(double a, double b)
+lin_solve(struct coeffs c)
 {
-	assert(!ISNAN(a));
-	assert(!ISINF(a));
+	assert(!ISNAN(c.a));
+	assert(!ISINF(c.a));
 
-	assert(!ISNAN(b));
-	assert(!ISINF(b));
+	assert(!ISNAN(c.b));
+	assert(!ISINF(c.b));
 
-	if (isequal(a, 0)) {
+	if (isequal(c.a, 0)) {
 		// equation 0 = 0
-		if (isequal(b, 0)) {
+		if (isequal(c.b, 0)) {
 			return (struct roots) {
 				.x1 = 0,
 				.x2 = 0,
@@ -88,24 +91,24 @@ lin_solve(double a, double b)
 
 	// ax + b = 0
 	return (struct roots) {
-		.x1 = -b / a,
-		.x2 = -b / a,
+		.x1 = -c.b / c.a,
+		.x2 = -c.b / c.a,
 		.num = ONE_ROOT,
 	};
 }
 
 // computes the dicriminant (D = b^2 - 4ac)
 static double
-get_discr(double a, double b, double c)
+get_discr(struct coeffs c)
 {
-	assert(!ISNAN(a));
-	assert(!ISINF(a));
+	assert(!ISNAN(c.a));
+	assert(!ISINF(c.a));
 
-	assert(!ISNAN(b));
-	assert(!ISINF(b));
+	assert(!ISNAN(c.b));
+	assert(!ISINF(c.b));
 
-	assert(!ISNAN(c));
-	assert(!ISINF(c));
+	assert(!ISNAN(c.c));
+	assert(!ISINF(c.c));
 
-	return b * b - 4 * a * c;
+	return c.b * c.b - 4 * c.a * c.c;
 }

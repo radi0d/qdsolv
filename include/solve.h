@@ -1,3 +1,5 @@
 #pragma once
 
-struct roots quad_solve(double a, double b, double c);
+#include "types.h"
+
+struct roots quad_solve(struct coeffs c);
