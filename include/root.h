@@ -10,6 +10,8 @@ enum root_number {
 	INF_ROOTS, ///< Any number
 };
 
+const char *root_number_to_str(enum root_number n);
+
 /**
  * @brief Roots of an equation
  *

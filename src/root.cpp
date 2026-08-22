@@ -5,6 +5,23 @@
 #include <assert.h>
 #include <stdio.h>
 
+const char *
+root_number_to_str(enum root_number n)
+{
+	switch (n) {
+	case NO_ROOTS:
+		return "0";
+	case ONE_ROOT:
+		return "1";
+	case TWO_ROOTS:
+		return "2";
+	case INF_ROOTS:
+		return "inf";
+	default:
+		assert("Unreachable" && 0);
+	}
+}
+
 /**
  * @brief Prints the roots of an equation
  *

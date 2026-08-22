@@ -1,4 +1,4 @@
-.PHONY: clean all docs
+.PHONY: clean all docs test
 
 VERBOSE ?=
 
@@ -22,7 +22,7 @@ CFLAGS = $(DEDFLAGS) -Iinclude/ -lm -DEPS=$(EPS) -MMD -MF $@.d
 
 CC ?= g++
 
-OBJ = $(patsubst src/%.cpp, $(BUILD)/%.o, $(wildcard src/*.cpp))
+OBJ = $(patsubst src/%.cpp, $(BUILD)/%.o, $(filter-out src/main.cpp, $(wildcard src/*.cpp)))
 
 all: qdsolv
 
@@ -30,7 +30,7 @@ $(BUILD)/%.o: src/%.cpp
 	$(ECHO) "CC $(notdir $@)"
 	$(QUIET) $(CC) -c $(CFLAGS) $< -o $@
 
-qdsolv: $(OBJ)
+qdsolv: $(BUILD)/main.o $(OBJ)
 	$(ECHO) "LD $(notdir $@)"
 	$(QUIET) $(CC) $(CFLAGS) $^ -o $(BUILD)/$@
 
@@ -41,5 +41,15 @@ docs:
 clean:
 	$(ECHO) "CLEAN"
 	$(QUIET) rm -rf $(BUILD)/*.o $(BUILD)/*.d $(BUILD)/qdsolv docs
+
+$(BUILD)/test.o: test/test.cpp
+	$(ECHO) "CC $(notdir $@)"
+	$(QUIET) $(CC) -c $(CFLAGS) $< -o $@
+
+test: $(BUILD)/test.o $(OBJ)
+	$(ECHO) "TEST"
+	$(QUIET) $(CC) $(CFLAGS) $^ -o $(BUILD)/$@
+	$(QUIET) ./$(BUILD)/$@
+	$(QUIET) rm ./$(BUILD)/$@
 
 -include $(BUILD)/*.d
