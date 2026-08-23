@@ -4,8 +4,10 @@
 #include "solve.h"
 
 #include <assert.h>
+#include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 struct test_case {
 	struct coeffs arg;
@@ -28,23 +30,33 @@ struct test_case {
 
 void run_test(size_t i, struct test_case c);
 
+int read_test_case(FILE *f, struct test_case *c);
+
+void run_hard_coded();
+void run_from_file(const char *file);
+
 static bool roots_isequal(roots a, roots b);
 
-int
-main(void)
-{
-	struct test_case cases[] = {
-		TEST(1, 2, 1, ONE_ROOT, -1, NAN),
-		TEST(1, -12, 35, TWO_ROOTS, 5, 7),
-		TEST(0, 0, 0, INF_ROOTS, NAN, NAN),
-		TEST(0, 0, 1, NO_ROOTS, NAN, NAN),
-		TEST(0, 2, 1, ONE_ROOT, -0.5, NAN),
-	};
+void print_usage();
 
-	for (size_t i = 0; i < sizeof(cases) / sizeof(struct test_case); i++) {
-		run_test(i, cases[i]);
+int
+main(int argc, const char *argv[])
+{
+	if (argc < 2) {
+		goto fail;
+	}
+
+	if (strcmp(argv[1], "hard") == 0 && 2 == argc) {
+		run_hard_coded();
+	} else if (strcmp(argv[1], "file") == 0 && 3 == argc) {
+		run_from_file(argv[2]);
+	} else {
+		goto fail;
 	}
 	return 0;
+ fail:
+	print_usage();
+	return 1;
 }
 
 static bool
@@ -73,7 +85,7 @@ roots_isequal(roots a, roots b)
 void
 run_test(size_t i, struct test_case c)
 {
-	printf("Running test#%zu... ", i);
+	printf("| Running test#%zu... ", i);
 	struct roots r = quad_solve(c.arg);
 	if (!roots_isequal(r, c.ref)) {
 		printf("ERR\n");
@@ -87,4 +99,106 @@ run_test(size_t i, struct test_case c)
 		exit(1);
 	}
 	printf("OK\n");
+}
+
+int
+read_test_case(FILE *f, struct test_case *c)
+{
+	assert(NULL != f);
+	assert(NULL != c);
+
+	struct test_case res = {};
+	int num_roots = 0;
+	int fields_read = fscanf(f, "%lf %lf %lf %d %lf %lf",
+	                 &res.arg.a, &res.arg.b, &res.arg.c,
+	                 &num_roots,
+	                 &res.ref.x1, &res.ref.x2);
+	if (EOF == fields_read) {
+		return 1;
+	}
+	if (6 != fields_read) {
+		return -1;
+	}
+
+	// sanitise the remaining chars
+	int ch = 0;
+	while ('\n' != (ch = fgetc(f)) && EOF != ch) {
+		if (!isspace(ch)) {
+			return -1;
+		}
+	}
+
+	switch(num_roots) {
+	case 0:
+		res.ref.num = NO_ROOTS;
+		break;
+	case 1:
+		res.ref.num = ONE_ROOT;
+		break;
+	case 2:
+		res.ref.num = TWO_ROOTS;
+		break;
+	case 3:
+		res.ref.num = INF_ROOTS;
+		break;
+	default:
+		return -1;
+	}
+
+	*c = res;
+	return 0;
+}
+
+void
+run_hard_coded()
+{
+	struct test_case cases[] = {
+		TEST(1, 2, 1, ONE_ROOT, -1, NAN),
+		TEST(1, -12, 35, TWO_ROOTS, 5, 7),
+		TEST(0, 0, 0, INF_ROOTS, NAN, NAN),
+		TEST(0, 0, 1, NO_ROOTS, NAN, NAN),
+		TEST(0, 2, 1, ONE_ROOT, -0.5, NAN),
+	};
+
+	printf("Running hard coded tests:\n");
+	for (size_t i = 0; i < sizeof(cases) / sizeof(struct test_case); i++) {
+		run_test(i, cases[i]);
+	}
+}
+
+void
+run_from_file(const char *file)
+{
+	FILE *test_file = fopen(file, "r");
+	if (NULL == test_file) {
+		perror("Testing failed");
+		exit(1);
+	}
+
+	printf("Running tests from the file:\n");
+	size_t current = 0;
+	while (true) {
+		struct test_case c = {};
+
+		int res = read_test_case(test_file, &c);
+		// EOF
+		if (1 == res) {
+			break;
+		}
+		// format error
+		if (-1 == res) {
+			printf("[ERR] Invalid test format\n");
+			exit(1);
+		}
+
+		run_test(current++, c);
+	}
+}
+
+void
+print_usage()
+{
+	printf("Usage: test hard\n"
+	       "       test file <file>\n"
+	       );
 }

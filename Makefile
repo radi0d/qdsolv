@@ -47,9 +47,7 @@ $(BUILD)/test.o: test/test.cpp
 	$(QUIET) $(CC) -c $(CFLAGS) $< -o $@
 
 test: $(BUILD)/test.o $(OBJ)
-	$(ECHO) "TEST"
+	$(ECHO) "LD $(notdir $@)"
 	$(QUIET) $(CC) $(CFLAGS) $^ -o $(BUILD)/$@
-	$(QUIET) ./$(BUILD)/$@
-	$(QUIET) rm ./$(BUILD)/$@
 
 -include $(BUILD)/*.d
