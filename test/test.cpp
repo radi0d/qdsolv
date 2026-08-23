@@ -14,6 +14,11 @@ struct test_case {
 	struct roots ref;
 };
 
+#define GREEN "\033[0;32;49m"
+#define YELLOW "\033[0;33;49m"
+#define RED "\033[0;31;49m"
+#define RESET "\033[0;39;49m"
+
 #define TEST(a_, b_, c_, num_ref, x1_ref, x2_ref)       \
 	(struct test_case) {                            \
 		.arg = (struct coeffs) {                \
@@ -88,17 +93,17 @@ run_test(size_t i, struct test_case c)
 	printf("| Running test#%zu... ", i);
 	struct roots r = quad_solve(c.arg);
 	if (!roots_isequal(r, c.ref)) {
-		printf("ERR\n");
-		printf("Test#%zu failed:\n"
-		       "Expected: %s root(s); x1 = %lg; x2 = %lg\n"
-		       "Got: %s root(s); x1 = %lg; x2 = %lg\n",
+		printf(RED "ERR\n" RESET);
+		printf(YELLOW "Test#%zu failed:\n" RESET
+		       "| " GREEN "Expected" RESET ": %s root(s); x1 = %lg; x2 = %lg\n"
+		       "| " RED "Got" RESET ": %s root(s); x1 = %lg; x2 = %lg\n",
 		       i,
 		       root_number_to_str(c.ref.num), c.ref.x1, c.ref.x2,
 		       root_number_to_str(r.num), r.x1, r.x2
 		       );
 		exit(1);
 	}
-	printf("OK\n");
+	printf(GREEN "OK\n" RESET);
 }
 
 int
@@ -160,7 +165,7 @@ run_hard_coded()
 		TEST(0, 2, 1, ONE_ROOT, -0.5, NAN),
 	};
 
-	printf("Running hard coded tests:\n");
+	printf(YELLOW "Running hard coded tests:\n" RESET );
 	for (size_t i = 0; i < sizeof(cases) / sizeof(struct test_case); i++) {
 		run_test(i, cases[i]);
 	}
@@ -175,7 +180,7 @@ run_from_file(const char *file)
 		exit(1);
 	}
 
-	printf("Running tests from the file:\n");
+	printf(YELLOW "Running tests from the file:\n" RESET);
 	size_t current = 0;
 	while (true) {
 		struct test_case c = {};
@@ -187,7 +192,7 @@ run_from_file(const char *file)
 		}
 		// format error
 		if (-1 == res) {
-			printf("[ERR] Invalid test format\n");
+			printf(RED "[ERR] " RESET "Invalid test format\n");
 			exit(1);
 		}
 
