@@ -33,12 +33,12 @@ struct test_case {
 		},                                      \
 	}
 
-void run_test(size_t i, struct test_case c);
+int run_test(size_t i, struct test_case c);
 
 int read_test_case(FILE *f, struct test_case *c);
 
-void run_hard_coded();
-void run_from_file(const char *file);
+int run_hard_coded();
+int run_from_file(const char *file);
 
 static bool roots_isequal(roots a, roots b);
 
@@ -51,10 +51,14 @@ main(int argc, const char *argv[])
 		goto fail;
 	}
 
-	if (strcmp(argv[1], "hard") == 0 && 2 == argc) {
-		run_hard_coded();
-	} else if (strcmp(argv[1], "file") == 0 && 3 == argc) {
-		run_from_file(argv[2]);
+	if (0 == strcmp(argv[1], "hard") && 2 == argc) {
+		if (run_hard_coded()) {
+			return 1;
+		}
+	} else if (0 == strcmp(argv[1], "file") && 3 == argc) {
+		if (run_from_file(argv[2])) {
+			return 1;
+		}
 	} else {
 		goto fail;
 	}
@@ -87,7 +91,7 @@ roots_isequal(roots a, roots b)
 	}
 }
 
-void
+int
 run_test(size_t i, struct test_case c)
 {
 	printf("| Running test#%zu... ", i);
@@ -101,9 +105,10 @@ run_test(size_t i, struct test_case c)
 		       root_number_to_str(c.ref.num), c.ref.x1, c.ref.x2,
 		       root_number_to_str(r.num), r.x1, r.x2
 		       );
-		exit(1);
+		return -1;
 	}
 	printf(GREEN "OK\n" RESET);
+	return 0;
 }
 
 int
@@ -154,7 +159,7 @@ read_test_case(FILE *f, struct test_case *c)
 	return 0;
 }
 
-void
+int
 run_hard_coded()
 {
 	struct test_case cases[] = {
@@ -167,11 +172,14 @@ run_hard_coded()
 
 	printf(YELLOW "Running hard coded tests:\n" RESET );
 	for (size_t i = 0; i < sizeof(cases) / sizeof(struct test_case); i++) {
-		run_test(i, cases[i]);
+		if (run_test(i, cases[i])) {
+			return -1;
+		}
 	}
+	return 0;
 }
 
-void
+int
 run_from_file(const char *file)
 {
 	FILE *test_file = fopen(file, "r");
@@ -196,8 +204,11 @@ run_from_file(const char *file)
 			exit(1);
 		}
 
-		run_test(current++, c);
+		if (run_test(current++, c)) {
+			return -1;
+		}
 	}
+	return 0;
 }
 
 void
