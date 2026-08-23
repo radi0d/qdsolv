@@ -11,7 +11,7 @@
 
 #define HANDLE(x)                                                              \
 	do {                                                                   \
-		if ((x) < 0) {                                                 \
+		if ((x)) {                                                     \
 			fprintf(stderr, "[ERR] Invalid coefficient format\n"); \
 			return -1;                                             \
 		}                                                              \
@@ -22,7 +22,7 @@
  *
  * @param[in] dst Destination
  *
- * @return Error code: 1, if successful; -1, if any errors were encoutered
+ * @return Error code: 0, if successful; -1, if any errors were encoutered
  *
  * Gets a double from the stdin line. Expects only the double in the line (ignoring all whitespace characters).
  */
@@ -46,7 +46,7 @@ get_double(double *dst)
 	}
 
 	*dst = res;
-	return 1;
+	return 0;
 }
 
 /**
@@ -71,5 +71,5 @@ prompt_user(struct coeffs *dst)
 	printf("Enter coefficient *c*: ");
 	HANDLE(get_double(&dst->c));
 
-	return 1;
+	return 0;
 }

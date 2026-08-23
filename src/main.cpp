@@ -13,7 +13,7 @@ main(void)
 
 	struct coeffs input = {};
 
-	if (prompt_user(&input) < 0) {
+	if (prompt_user(&input)) {
 		return 1;
 	}
 
