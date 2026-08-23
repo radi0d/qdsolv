@@ -35,7 +35,7 @@ quad_solve(struct coeffs c) {
 			.c = 0,
 		};
 		struct roots result = lin_solve(l);
-		assert(result.num != TWO_ROOTS);
+		assert(TWO_ROOTS != result.num);
 		return result;
 	}
 

@@ -20,7 +20,7 @@ custom_isnan_bin(double x)
 {
 	uint64_t t = *(uint64_t *) &x;
 	// see IEEE 754
-	return (t & 0xfffffffffffff) != 0 && (t >> 52 & 0x7ff) == 0x7ff;
+	return 0 != (t & 0xfffffffffffff) && 0x7ff == (t >> 52 & 0x7ff);
 }
 
 bool
@@ -28,5 +28,5 @@ custom_isinf(double x)
 {
 	uint64_t t = *(uint64_t *) &x;
 	// see IEEE 754
-	return (t & 0xfffffffffffff) == 0 && (t >> 52 & 0x7ff) == 0x7ff;
+	return 0 == (t & 0xfffffffffffff) && 0x7ff == (t >> 52 & 0x7ff);
 }

@@ -29,17 +29,17 @@
 int
 get_double(double *dst)
 {
-	assert(dst != NULL);
+	assert(NULL != dst);
 
 	double res = 0;
 	int num = scanf("%lf", &res);
-	if (num != 1 || ISNAN(res) || ISINF(res)) {
+	if (1 != num || ISNAN(res) || ISINF(res)) {
 		return -1;
 	}
 
 	// sanitise the remaining chars
 	int c = 0;
-	while ((c = getchar()) != '\n' && c != EOF) {
+	while ('\n' != (c = getchar()) && EOF != c) {
 		if (!isspace(c)) {
 			return -1;
 		}
