@@ -9,6 +9,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define HANDLE(x)                                                              \
+	do {                                                                   \
+		if ((x) < 0) {                                                 \
+			fprintf(stderr, "[ERR] Invalid coefficient format\n"); \
+			return -1;                                             \
+		}                                                              \
+	} while(0)
+
 /**
  * @brief Gets a double from the stdin line
  *
@@ -50,11 +58,18 @@ get_double(double *dst)
  * @return The result of get_double() called internally
  */
 int
-prompt_user(const char *arg, double *dst)
+prompt_user(struct coeffs *dst)
 {
-	assert(arg != NULL);
 	assert(dst != NULL);
 
-	printf("Enter coefficient *%s*: ", arg);
-	return get_double(dst);
+	printf("Enter coefficient *a*: ");
+	HANDLE(get_double(&dst->a));
+
+	printf("Enter coefficient *b*: ");
+	HANDLE(get_double(&dst->b));
+
+	printf("Enter coefficient *c*: ");
+	HANDLE(get_double(&dst->c));
+
+	return 1;
 }

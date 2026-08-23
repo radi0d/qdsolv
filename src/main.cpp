@@ -4,14 +4,6 @@
 
 #include <stdio.h>
 
-#define HANDLE(x)                                                              \
-	do {                                                                   \
-		if ((x) < 0) {                                                 \
-			fprintf(stderr, "[ERR] Invalid coefficient format\n"); \
-			return 1;                                              \
-		}                                                              \
-	} while(0)
-
 int
 main(void)
 {
@@ -19,17 +11,13 @@ main(void)
 	       "Copyright (c) radi0d 2026\n\n"
 	       );
 
-	double a = 0, b = 0, c = 0;
+	struct coeffs input = {};
 
-	HANDLE(prompt_user("a", &a));
-	HANDLE(prompt_user("b", &b));
-	HANDLE(prompt_user("c", &c));
+	if (prompt_user(&input) < 0) {
+		return 1;
+	}
 
-	struct roots result = quad_solve((struct coeffs) {
-		.a = a,
-		.b = b,
-		.c = c,
-	});
+	struct roots result = quad_solve(input);
 
 	printf("\n");
 	print_roots(result);
