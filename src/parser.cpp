@@ -1,3 +1,4 @@
+#include "parser.h"
 #include "types.h"
 
 #include <assert.h>
@@ -425,22 +426,5 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 		.b = b,
 		.c = c,
 	};
-	return 0;
-}
-
-int
-main(void)
-{
-	char *s = NULL;
-	size_t n = 0;
-	(void) getline(&s, &n, stdin);
-	struct coeffs c = {};
-	if (parse_equation(s, strlen(s), &c)) {
-		fprintf(stderr, "[ERR] Invalid equation format\n");
-		free(s);
-		return 1;
-	}
-	printf("a = %lf; b = %lf; c = %lf\n", c.a, c.b, c.c);
-	free(s);
 	return 0;
 }
