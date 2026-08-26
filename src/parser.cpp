@@ -346,47 +346,49 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 	}
 	// glue signs to numbers
 	struct token final_tokens[TOKEN_BUFFER] = {};
-	size_t i = 0;
 	size_t token_len = 0;
-	while (i < tok_ptr) {
-		switch (tok_buf[i].type) {
-		case MINUS:
-		case PLUS: {
-			if (NUMBER != tok_buf[i + 1].type &&
-			    NUMBER_DOT_NUMBER != tok_buf[i + 1].type) {
-				return -1;
+	{
+		size_t i = 0;
+		while (i < tok_ptr) {
+			switch (tok_buf[i].type) {
+			case MINUS:
+			case PLUS: {
+				if (NUMBER != tok_buf[i + 1].type &&
+				    NUMBER_DOT_NUMBER != tok_buf[i + 1].type) {
+					return -1;
+				}
+				struct token t = {};
+				if (strlen(tok_buf[i].data) +
+				    strlen(tok_buf[i + 1].data) >= 128) {
+					return -1;
+				}
+				t.type = NUMBER;
+				if (MINUS == tok_buf[i].type) {
+					strcat(t.data, tok_buf[i].data);
+				}
+				strcat(t.data, tok_buf[i + 1].data);
+				final_tokens[token_len++] = t;
+				i += 2;
+				break;
 			}
-			struct token t = {};
-			if (strlen(tok_buf[i].data) +
-			    strlen(tok_buf[i + 1].data) >= 128) {
-				return -1;
+			case NUMBER:
+			case NUMBER_DOT_NUMBER:
+				final_tokens[token_len] = tok_buf[i];
+				final_tokens[token_len].type = NUMBER;
+				token_len++;
+				i += 1;
+				break;
+			case VARIABLE:
+			case EQUAL:
+			case POWER:
+				final_tokens[token_len++] = tok_buf[i];
+				i += 1;
+				break;
+			case NUMBER_DOT:
+			case NONE:
+			default:
+				assert("Unreachable" && 0);
 			}
-			t.type = NUMBER;
-			if (MINUS == tok_buf[i].type) {
-				strcat(t.data, tok_buf[i].data);
-			}
-			strcat(t.data, tok_buf[i + 1].data);
-			final_tokens[token_len++] = t;
-			i += 2;
-			break;
-		}
-		case NUMBER:
-		case NUMBER_DOT_NUMBER:
-			final_tokens[token_len] = tok_buf[i];
-			final_tokens[token_len].type = NUMBER;
-			token_len++;
-			i += 1;
-			break;
-		case VARIABLE:
-		case EQUAL:
-		case POWER:
-			final_tokens[token_len++] = tok_buf[i];
-			i += 1;
-			break;
-		case NUMBER_DOT:
-		case NONE:
-		default:
-			assert("Unreachable" && 0);
 		}
 	}
 	enum token_type correct[] = {
