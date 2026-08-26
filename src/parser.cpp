@@ -414,10 +414,9 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 	if (!isequal(p, 2) || !isequal(f, 0)) {
 		return -1;
 	}
-	*dst = (struct coeffs) {
-		.a = a,
-		.b = b,
-		.c = c,
-	};
+
+	dst->a = a;
+	dst->b = b;
+	dst->c = c;
 	return 0;
 }
