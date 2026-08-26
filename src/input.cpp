@@ -115,6 +115,7 @@ read_equation(struct coeffs *dst)
 	if (line == NULL) {
 		return -1;
 	}
+	(void) cap;
 
 	if (parse_equation(line, strlen(line), dst)) {
 		fprintf(stderr, "[ERR] Invalid equation format\n");
