@@ -1,3 +1,4 @@
+#include "comp.h"
 #include "parser.h"
 #include "types.h"
 
@@ -418,7 +419,7 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 	if (1 != sscanf(final_tokens[8].data, "%lf", &f)) {
 		return -1;
 	}
-	if (p != 2 || f != 0) {
+	if (!isequal(p, 2) || !isequal(f, 0)) {
 		return -1;
 	}
 	*dst = (struct coeffs) {
