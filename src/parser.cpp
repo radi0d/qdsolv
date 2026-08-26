@@ -325,6 +325,8 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				break;
 			}
 			return -1;
+		default:
+			assert("Unreachable" && 0);
 		}
 	}
 	if (NONE != s) {
@@ -379,6 +381,10 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 			final_tokens[token_len++] = tok_buf[i];
 			i += 1;
 			break;
+		case NUMBER_DOT:
+		case NONE:
+		default:
+			assert("Unreachable" && 0);
 		}
 	}
 	enum token_type correct[] = {
