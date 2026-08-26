@@ -26,7 +26,7 @@ enum token_type {
 
 struct token {
 	enum token_type type;
-	char data[TOKEN_BUFFER];
+	char data[PARSER_BUFFER];
 };
 
 int
