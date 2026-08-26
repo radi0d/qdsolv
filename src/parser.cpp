@@ -70,6 +70,9 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 			if (isspace(c)) {
 				break;
 			}
+			if ('.' == c) {
+				return -1;
+			}
 			PUSHC(c);
 			if (isdigit(c)) {
 				tok.type = NUMBER;
@@ -97,8 +100,6 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				tok.type = POWER;
 				s = POWER;
 				break;
-			case '.':
-				return -1;
 			default:
 				assert("Unreachable" && 0);
 			}
@@ -159,7 +160,7 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				s = NUMBER_DOT_NUMBER;
 				break;
 			}
-			break;
+			return -1;
 		case NUMBER_DOT_NUMBER:
 			if (isspace(c)) {
 				PUSHT(tok);
