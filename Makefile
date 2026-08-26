@@ -40,7 +40,7 @@ docs:
 
 clean:
 	$(ECHO) "CLEAN"
-	$(QUIET) rm -rf $(BUILD)/*.o $(BUILD)/*.d $(BUILD)/qdsolv docs
+	$(QUIET) rm -rf $(BUILD)/*.o $(BUILD)/*.d $(BUILD)/qdsolv $(BUILD)/test docs
 
 $(BUILD)/test.o: test/test.cpp
 	$(ECHO) "CC $(notdir $@)"
