@@ -76,42 +76,34 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				s = NUMBER;
 				break;
 			}
-			// TODO: use switch
-			if ('x' == c) {
+			switch (c) {
+			case 'x':
 				tok.type = VARIABLE;
 				s = VARIABLE;
 				break;
-			}
-			if ('=' == c) {
+			case '=':
 				tok.type = EQUAL;
 				s = EQUAL;
 				break;
-			}
-			if ('+' == c) {
+			case '+':
 				tok.type = PLUS;
 				s = PLUS;
 				break;
-			}
-			if ('-' == c) {
+			case '-':
 				tok.type = MINUS;
 				s = MINUS;
 				break;
-			}
-			if ('^' == c) {
+			case '^':
 				tok.type = POWER;
 				s = POWER;
 				break;
-			}
-			if ('.' == c) {
+			case '.':
 				return -1;
+			default:
+				assert("Unreachable" && 0);
 			}
 			break;
 		case NUMBER:
-			if ('.' == c) {
-				PUSHC(c);
-				s = NUMBER_DOT;
-				break;
-			}
 			if (isdigit(c)) {
 				PUSHC(c);
 				break;
@@ -122,36 +114,39 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				s = NONE;
 				break;
 			}
-			if ('=' == c) {
+			switch (c) {
+			case '.':
+				PUSHC(c);
+				s = NUMBER_DOT;
+				break;
+			case '=':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = EQUAL;
 				s = EQUAL;
 				break;
-			}
-			if ('-' == c) {
+			case '-':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = MINUS;
 				s = MINUS;
 				break;
-			}
-			if ('+' == c) {
+			case '+':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = PLUS;
 				s = PLUS;
 				break;
-			}
-			if ('x' == c) {
+			case 'x':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = VARIABLE;
 				s = VARIABLE;
 				break;
-			}
-			if ('^' == c) {
+			case '^':
 				return -1;
+			default:
+				assert("Unreachable" && 0);
 			}
 			break;
 		case NUMBER_DOT:
@@ -176,39 +171,37 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				PUSHC(c);
 				break;
 			}
-			if ('.' == c) {
+			switch (c) {
+			case '.':
 				return -1;
-			}
-			if ('x' == c) {
+			case 'x':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = VARIABLE;
 				s = VARIABLE;
 				break;
-			}
-			if ('=' == c) {
+			case '=':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = EQUAL;
 				s = EQUAL;
 				break;
-			}
-			if ('-' == c) {
+			case '-':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = MINUS;
 				s = MINUS;
 				break;
-			}
-			if ('+' == c) {
+			case '+':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = PLUS;
 				s = PLUS;
 				break;
-			}
-			if ('^' == c) {
+			case '^':
 				return -1;
+			default:
+				assert("Unreachable" && 0);
 			}
 			break;
 		case VARIABLE:
@@ -221,35 +214,32 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				s = NONE;
 				break;
 			}
-			if ('+' == c) {
+			switch (c) {
+			case '+':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = PLUS;
 				s = PLUS;
 				break;
-			}
-			if ('-' == c) {
+			case '-':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = MINUS;
 				s = MINUS;
 				break;
-			}
-			if ('^' == c) {
+			case '^':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = POWER;
 				s = POWER;
 				break;
-			}
-			if ('=' == c) {
+			case '=':
 				PUSHT(tok);
 				PUSHC(c);
 				tok.type = EQUAL;
 				s = EQUAL;
 				break;
-			}
-			if ('.' == c) {
+			case '.':
 				return -1;
 			}
 			break;
