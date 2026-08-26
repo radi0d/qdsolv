@@ -32,13 +32,12 @@ struct token {
 int
 parse_equation(const char *equation, size_t len, struct coeffs *dst)
 {
-
-#define PUSHC(c)                                \
-	do {                                    \
-		if (buf_ptr >= PARSER_BUFFER) { \
-			return -1;              \
-		}                               \
-		buf[buf_ptr++] = c;             \
+#define PUSHC(c)                                        \
+	do {                                            \
+		if (buf_ptr >= PARSER_BUFFER - 1) {     \
+			return -1;                      \
+		}                                       \
+		buf[buf_ptr++] = c;                     \
 	} while(0)
 
 #define PUSHT(t)                                \
