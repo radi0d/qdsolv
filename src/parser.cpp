@@ -28,6 +28,7 @@ enum token_type {
 
 struct token {
 	enum token_type type;
+	size_t len;
 	char data[PARSER_BUFFER];
 };
 
@@ -48,6 +49,7 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 			return -1;              \
 		}                               \
 		strncpy(t.data, buf, buf_ptr);  \
+		t.len = buf_ptr;                \
 		tok_buf[tok_ptr++] = t;         \
 		t = {};                         \
 		buf_ptr = 0;                    \
@@ -349,15 +351,17 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 					return -1;
 				}
 				struct token t = {};
-				if (strlen(tok_buf[i].data) +
-				    strlen(tok_buf[i + 1].data) >= PARSER_BUFFER) {
+				if (tok_buf[i].len + tok_buf[i + 1].len >=
+				    PARSER_BUFFER) {
 					return -1;
 				}
 				t.type = NUMBER;
 				if (MINUS == tok_buf[i].type) {
 					strcat(t.data, tok_buf[i].data);
+					t.len = tok_buf[i].len;
 				}
 				strcat(t.data, tok_buf[i + 1].data);
+				t.len += tok_buf[i + 1].len;
 				final_tokens[token_len++] = t;
 				i += 2;
 				break;
