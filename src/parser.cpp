@@ -350,7 +350,7 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				}
 				struct token t = {};
 				if (strlen(tok_buf[i].data) +
-				    strlen(tok_buf[i + 1].data) >= 128) {
+				    strlen(tok_buf[i + 1].data) >= PARSER_BUFFER) {
 					return -1;
 				}
 				t.type = NUMBER;
