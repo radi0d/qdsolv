@@ -185,7 +185,7 @@ run_from_file(const char *file)
 	FILE *test_file = fopen(file, "r");
 	if (NULL == test_file) {
 		perror("Testing failed");
-		exit(1);
+		return -1;
 	}
 
 	printf(YELLOW "Running tests from the file:\n" RESET);
@@ -201,7 +201,7 @@ run_from_file(const char *file)
 		// format error
 		if (-1 == res) {
 			printf(RED "[ERR] " RESET "Invalid test format\n");
-			exit(1);
+			return -1;
 		}
 
 		if (run_test(current++, c)) {
