@@ -33,14 +33,8 @@ struct test_case {
 		},                                      \
 	}
 
-int run_test(size_t i, struct test_case c);
-
-int read_test_case(FILE *f, struct test_case *c);
-
 int run_hard_coded();
 int run_from_file(const char *file);
-
-static bool roots_isequal(roots a, roots b);
 
 void print_usage();
 
@@ -68,6 +62,92 @@ main(int argc, const char *argv[])
 	return 1;
 }
 
+int run_test(size_t i, struct test_case c);
+
+int
+run_hard_coded()
+{
+	struct test_case cases[] = {
+		TEST(1, 2, 1, ONE_ROOT, -1, NAN),
+		TEST(1, -12, 35, TWO_ROOTS, 5, 7),
+		TEST(0, 0, 0, INF_ROOTS, NAN, NAN),
+		TEST(0, 0, 1, NO_ROOTS, NAN, NAN),
+		TEST(0, 2, 1, ONE_ROOT, -0.5, NAN),
+	};
+
+	printf(YELLOW "Running hard coded tests:\n" RESET );
+	for (size_t i = 0; i < sizeof(cases) / sizeof(struct test_case); i++) {
+		if (run_test(i, cases[i])) {
+			return -1;
+		}
+	}
+	return 0;
+}
+
+int read_test_case(FILE *f, struct test_case *c);
+
+int
+run_from_file(const char *file)
+{
+	FILE *test_file = fopen(file, "r");
+	if (NULL == test_file) {
+		perror("Testing failed");
+		return -1;
+	}
+
+	printf(YELLOW "Running tests from the file:\n" RESET);
+	size_t current = 0;
+	while (true) {
+		struct test_case c = {};
+
+		int res = read_test_case(test_file, &c);
+		// EOF
+		if (1 == res) {
+			break;
+		}
+		// format error
+		if (-1 == res) {
+			printf(RED "[ERR] " RESET "Invalid test format\n");
+			return -1;
+		}
+
+		if (run_test(current++, c)) {
+			return -1;
+		}
+	}
+	return 0;
+}
+
+void
+print_usage()
+{
+	printf("Usage: test hard\n"
+	       "       test file <file>\n"
+	       );
+}
+
+static bool roots_isequal(roots a, roots b);
+
+int
+run_test(size_t i, struct test_case c)
+{
+	printf("| Running test#%zu... ", i);
+	struct roots r = quad_solve(c.arg);
+	if (!roots_isequal(r, c.ref)) {
+		printf(RED "ERR\n" RESET);
+		printf(YELLOW "Test#%zu failed:\n" RESET
+		       "| " GREEN "Expected" RESET ": %s root(s); x1 = %lg; x2 = %lg\n"
+		       "| " RED "Got" RESET ": %s root(s); x1 = %lg; x2 = %lg\n",
+		       i,
+		       root_number_to_str(c.ref.num), c.ref.x1, c.ref.x2,
+		       root_number_to_str(r.num), r.x1, r.x2
+		       );
+		return -1;
+	}
+	printf(GREEN "OK\n" RESET);
+	return 0;
+}
+
 static bool
 roots_isequal(roots a, roots b)
 {
@@ -89,26 +169,6 @@ roots_isequal(roots a, roots b)
 	default:
 		assert("Unreachable" && 0);
 	}
-}
-
-int
-run_test(size_t i, struct test_case c)
-{
-	printf("| Running test#%zu... ", i);
-	struct roots r = quad_solve(c.arg);
-	if (!roots_isequal(r, c.ref)) {
-		printf(RED "ERR\n" RESET);
-		printf(YELLOW "Test#%zu failed:\n" RESET
-		       "| " GREEN "Expected" RESET ": %s root(s); x1 = %lg; x2 = %lg\n"
-		       "| " RED "Got" RESET ": %s root(s); x1 = %lg; x2 = %lg\n",
-		       i,
-		       root_number_to_str(c.ref.num), c.ref.x1, c.ref.x2,
-		       root_number_to_str(r.num), r.x1, r.x2
-		       );
-		return -1;
-	}
-	printf(GREEN "OK\n" RESET);
-	return 0;
 }
 
 int
@@ -157,64 +217,4 @@ read_test_case(FILE *f, struct test_case *c)
 
 	*c = res;
 	return 0;
-}
-
-int
-run_hard_coded()
-{
-	struct test_case cases[] = {
-		TEST(1, 2, 1, ONE_ROOT, -1, NAN),
-		TEST(1, -12, 35, TWO_ROOTS, 5, 7),
-		TEST(0, 0, 0, INF_ROOTS, NAN, NAN),
-		TEST(0, 0, 1, NO_ROOTS, NAN, NAN),
-		TEST(0, 2, 1, ONE_ROOT, -0.5, NAN),
-	};
-
-	printf(YELLOW "Running hard coded tests:\n" RESET );
-	for (size_t i = 0; i < sizeof(cases) / sizeof(struct test_case); i++) {
-		if (run_test(i, cases[i])) {
-			return -1;
-		}
-	}
-	return 0;
-}
-
-int
-run_from_file(const char *file)
-{
-	FILE *test_file = fopen(file, "r");
-	if (NULL == test_file) {
-		perror("Testing failed");
-		return -1;
-	}
-
-	printf(YELLOW "Running tests from the file:\n" RESET);
-	size_t current = 0;
-	while (true) {
-		struct test_case c = {};
-
-		int res = read_test_case(test_file, &c);
-		// EOF
-		if (1 == res) {
-			break;
-		}
-		// format error
-		if (-1 == res) {
-			printf(RED "[ERR] " RESET "Invalid test format\n");
-			return -1;
-		}
-
-		if (run_test(current++, c)) {
-			return -1;
-		}
-	}
-	return 0;
-}
-
-void
-print_usage()
-{
-	printf("Usage: test hard\n"
-	       "       test file <file>\n"
-	       );
 }
