@@ -180,9 +180,9 @@ read_test_case(FILE *f, struct test_case *c)
 	struct test_case res = {};
 	int num_roots = 0;
 	int fields_read = fscanf(f, "%lf %lf %lf %d %lf %lf",
-	                 &res.arg.a, &res.arg.b, &res.arg.c,
-	                 &num_roots,
-	                 &res.ref.x1, &res.ref.x2);
+	                         &res.arg.a, &res.arg.b, &res.arg.c,
+	                         &num_roots,
+	                         &res.ref.x1, &res.ref.x2);
 	if (EOF == fields_read) {
 		return 1;
 	}
