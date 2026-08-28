@@ -243,6 +243,7 @@ parse_equation(const char *equation, size_t len, struct coeffs *dst)
 				s = EQUAL;
 				break;
 			case '.':
+			case 'x':
 				return -1;
 			}
 			break;
