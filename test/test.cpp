@@ -108,13 +108,16 @@ run_from_file(const char *file)
 		// format error
 		if (-1 == res) {
 			printf(RED "[ERR] " RESET "Invalid test format\n");
+			fclose(test_file);
 			return -1;
 		}
 
 		if (run_test(current++, c)) {
+			fclose(test_file);
 			return -1;
 		}
 	}
+	fclose(test_file);
 	return 0;
 }
 
