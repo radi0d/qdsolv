@@ -24,15 +24,15 @@ CC ?= g++
 
 OBJ = $(patsubst src/%.cpp, $(BUILD)/%.o, $(filter-out src/main.cpp, $(wildcard src/*.cpp)))
 
-all: qdsolv
+all: $(BUILD)/qdsolv
 
 $(BUILD)/%.o: src/%.cpp
 	$(ECHO) "CC $(notdir $@)"
 	$(QUIET) $(CC) -c $(CFLAGS) $< -o $@
 
-qdsolv: $(BUILD)/main.o $(OBJ)
+$(BUILD)/qdsolv: $(BUILD)/main.o $(OBJ)
 	$(ECHO) "LD $(notdir $@)"
-	$(QUIET) $(CC) $(CFLAGS) $^ -o $(BUILD)/$@
+	$(QUIET) $(CC) $(CFLAGS) $^ -o $@
 
 docs:
 	$(ECHO) "DOCS"
