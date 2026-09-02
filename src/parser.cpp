@@ -11,9 +11,6 @@
 #define PARSER_BUFFER 128
 #define TOKEN_BUFFER 128
 
-// TODO: parser tests
-// TODO: FSM graph (hand drawn)
-
 enum token_type {
 	NONE,
 	NUMBER,
